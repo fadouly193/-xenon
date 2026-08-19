@@ -38,12 +38,8 @@ module.exports = async function handler(req, res) {
     return res
       .status(405)
       .json({
-
         success: false,
-
-        error:
-          "METHOD_NOT_ALLOWED"
-
+        error: "METHOD_NOT_ALLOWED"
       });
 
   }
@@ -75,43 +71,38 @@ module.exports = async function handler(req, res) {
 
       if (!apiKey) {
 
+        console.log(
+          "OPENROUTER KEY MISSING"
+        );
+
+
         return res
           .status(500)
           .json({
-
             success: false,
-
-            error:
-              "OPENROUTER_API_KEY_MISSING"
-
+            error: "OPENROUTER_API_KEY_MISSING"
           });
 
       }
 
 
       const body =
-        typeof req.body ===
-        "string"
+        typeof req.body === "string"
+          ? JSON.parse(req.body)
+          : (req.body || {});
 
-          ? JSON.parse(
-              req.body
-            )
 
-          : (
-              req.body ||
-              {}
-            );
+      console.log(
+        "OPENROUTER REQUEST MODEL:",
+        body.model
+      );
 
 
       const response =
         await fetch(
-
           "https://openrouter.ai/api/v1/chat/completions",
-
           {
-
-            method:
-              "POST",
+            method: "POST",
 
             headers: {
 
@@ -122,7 +113,7 @@ module.exports = async function handler(req, res) {
                 "application/json",
 
               "HTTP-Referer":
-                "https://xenon.vercel.app",
+                "https://xenon-sable.vercel.app",
 
               "X-Title":
                 "Xenon"
@@ -135,12 +126,23 @@ module.exports = async function handler(req, res) {
               )
 
           }
-
         );
 
 
       const responseText =
         await response.text();
+
+
+      console.log(
+        "OPENROUTER STATUS:",
+        response.status
+      );
+
+
+      console.log(
+        "OPENROUTER RESPONSE:",
+        responseText
+      );
 
 
       res.status(
@@ -174,32 +176,25 @@ module.exports = async function handler(req, res) {
 
       if (!apiKey) {
 
+        console.log(
+          "ELEVENLABS KEY MISSING"
+        );
+
+
         return res
           .status(500)
           .json({
-
             success: false,
-
-            error:
-              "ELEVENLABS_API_KEY_MISSING"
-
+            error: "ELEVENLABS_API_KEY_MISSING"
           });
 
       }
 
 
       const body =
-        typeof req.body ===
-        "string"
-
-          ? JSON.parse(
-              req.body
-            )
-
-          : (
-              req.body ||
-              {}
-            );
+        typeof req.body === "string"
+          ? JSON.parse(req.body)
+          : (req.body || {});
 
 
       const text =
@@ -234,27 +229,19 @@ module.exports = async function handler(req, res) {
         return res
           .status(400)
           .json({
-
             success: false,
-
-            error:
-              "TEXT_OR_VOICE_MISSING"
-
+            error: "TEXT_OR_VOICE_MISSING"
           });
 
       }
 
 
       const endpoint =
-
         "https://api.elevenlabs.io/v1/text-to-speech/" +
-
         encodeURIComponent(
           voiceId
         ) +
-
         "?output_format=" +
-
         encodeURIComponent(
           outputFormat
         );
@@ -262,13 +249,9 @@ module.exports = async function handler(req, res) {
 
       const response =
         await fetch(
-
           endpoint,
-
           {
-
-            method:
-              "POST",
+            method: "POST",
 
             headers: {
 
@@ -312,7 +295,6 @@ module.exports = async function handler(req, res) {
               })
 
           }
-
         );
 
 
@@ -322,20 +304,26 @@ module.exports = async function handler(req, res) {
           await response.text();
 
 
+        console.log(
+          "ELEVENLABS TTS STATUS:",
+          response.status
+        );
+
+
+        console.log(
+          "ELEVENLABS TTS RESPONSE:",
+          errorText
+        );
+
+
         return res
           .status(
             response.status
           )
           .json({
-
             success: false,
-
-            error:
-              "ELEVENLABS_TTS_ERROR",
-
-            details:
-              errorText
-
+            error: "ELEVENLABS_TTS_ERROR",
+            details: errorText
           });
 
       }
@@ -386,12 +374,8 @@ module.exports = async function handler(req, res) {
         return res
           .status(500)
           .json({
-
             success: false,
-
-            error:
-              "ELEVENLABS_API_KEY_MISSING"
-
+            error: "ELEVENLABS_API_KEY_MISSING"
           });
 
       }
@@ -413,12 +397,8 @@ module.exports = async function handler(req, res) {
         return res
           .status(400)
           .json({
-
             success: false,
-
-            error:
-              "INVALID_AUDIO_FORM"
-
+            error: "INVALID_AUDIO_FORM"
           });
 
       }
@@ -426,13 +406,9 @@ module.exports = async function handler(req, res) {
 
       const response =
         await fetch(
-
           "https://api.elevenlabs.io/v1/speech-to-text",
-
           {
-
-            method:
-              "POST",
+            method: "POST",
 
             headers: {
 
@@ -451,12 +427,23 @@ module.exports = async function handler(req, res) {
               "half"
 
           }
-
         );
 
 
       const responseText =
         await response.text();
+
+
+      console.log(
+        "ELEVENLABS STT STATUS:",
+        response.status
+      );
+
+
+      console.log(
+        "ELEVENLABS STT RESPONSE:",
+        responseText
+      );
 
 
       res.status(
@@ -484,12 +471,8 @@ module.exports = async function handler(req, res) {
     return res
       .status(400)
       .json({
-
         success: false,
-
-        error:
-          "UNKNOWN_ACTION"
-
+        error: "UNKNOWN_ACTION"
       });
 
   }
@@ -505,16 +488,11 @@ module.exports = async function handler(req, res) {
     return res
       .status(500)
       .json({
-
         success: false,
-
-        error:
-          "XENON_BACKEND_ERROR",
-
+        error: "XENON_BACKEND_ERROR",
         message:
           error?.message ||
           "Unknown server error"
-
       });
 
   }
