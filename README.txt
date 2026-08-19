@@ -8,3 +8,4 @@ XENON READY BUILD
 4) Preview the project.
 
 This build is the modular migration base for Xenon.
+redeploy
